@@ -1,0 +1,21 @@
+@page
+@model ResultModel
+@{
+    ViewData["Title"] = "Shortened Result";
+}
+
+<h2>Shortened URL Result</h2>
+@if (Model.ShortUrl != null)
+{
+    <div class="alert alert-success">
+        <strong>Your short URL:</strong> <a href="@Model.ShortUrl" target="_blank">@Model.ShortUrl</a>
+    </div>
+    <div>
+        <img src="/api/qr/@Model.ShortCode?size=200" alt="QR Code" />
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">No result to display.</div>
+}
+<a href="/">Back to main page</a>

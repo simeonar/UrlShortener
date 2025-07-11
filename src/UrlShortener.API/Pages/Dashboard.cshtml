@@ -1,0 +1,31 @@
+@page
+@model DashboardModel
+@{
+    ViewData["Title"] = "Statistics Dashboard";
+}
+
+<h2>Statistics Dashboard</h2>
+<div id="stats-container">
+    <!-- Chart.js will render here -->
+    <canvas id="statsChart" width="600" height="300"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Example: fetch stats and render chart
+    fetch('/api/stats')
+        .then(r => r.json())
+        .then(data => {
+            const ctx = document.getElementById('statsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Clicks',
+                        data: data.clicks,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                    }]
+                }
+            });
+        });
+</script>

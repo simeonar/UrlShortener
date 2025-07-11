@@ -1,0 +1,23 @@
+@page
+@model ManageModel
+@{
+    ViewData["Title"] = "Manage Links";
+}
+
+<h2>Manage Your Shortened Links</h2>
+<div id="links-list">
+    <!-- Links will be loaded here -->
+</div>
+<script>
+    // Example: fetch and render user's links
+    fetch('/api/urls')
+        .then(r => r.json())
+        .then(data => {
+            const container = document.getElementById('links-list');
+            if (data.length === 0) {
+                container.innerHTML = '<div>No links found.</div>';
+            } else {
+                container.innerHTML = '<ul>' + data.map(l => `<li><a href="/${l.shortCode}" target="_blank">${l.shortCode}</a> - ${l.originalUrl}</li>`).join('') + '</ul>';
+            }
+        });
+</script>
