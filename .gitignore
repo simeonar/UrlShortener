@@ -44,4 +44,10 @@ Thumbs.db
 .resharper/
 .dotCover/
 .vs/
+**/.vs/UrlShortener/CopilotIndices/
+**/.vs/UrlShortener/FileContentIndex/
+*.vsidx
+*.db
+**/.vs/UrlShortener/v17/*.futdcache*
+**/.vs/UrlShortener/v17/DocumentLayout*
 PROGRESS.md
