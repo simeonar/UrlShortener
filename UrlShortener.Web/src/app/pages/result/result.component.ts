@@ -19,6 +19,9 @@ import { CommonModule } from '@angular/common';
       </div>
       <div class="mb-3" *ngIf="result.shortUrl">
         <img [src]="qrCodeUrl" alt="QR Code" width="200" height="200">
+        <div class="mt-2 small text-muted">
+          QR data: <span>{{ qrCodeUrl }}</span>
+        </div>
       </div>
       <a (click)="onShortenAnother()" class="btn btn-secondary">Shorten another</a>
     </div>
@@ -37,11 +40,9 @@ export class ResultComponent {
   private router = inject(Router);
 
   constructor() {
-    // SSR: сначала пробуем получить из текущей навигации, иначе из history.state
     const nav = this.router.getCurrentNavigation();
-    this.result = nav?.extras?.state?.['result'] || history.state?.result;
+    this.result = nav?.extras?.state?.['result'];
     if (this.result && this.result.shortUrl) {
-      // QR-код теперь ведет на саму короткую ссылку
       this.qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(this.result.shortUrl)}`;
     }
   }
