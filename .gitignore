@@ -1,0 +1,47 @@
+# Internal progress file
+PROGRESS.md
+
+# Exclude documentation
+Docs/
+
+# Exclude all markdown files except README.md (case-insensitive)
+*.md
+!README.md
+!README.MD
+!**/README.md
+!**/README.MD
+
+# Build output
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Docker
+docker/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+~$*
+*.tmp
+
+# Rider/JetBrains
+.idea/
+.Rider/
+.resharper/
+.dotCover/
+.vs/
+PROGRESS.md
