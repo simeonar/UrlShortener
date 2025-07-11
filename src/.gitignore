@@ -32,3 +32,4 @@ Docs/
 # Exclude solution/project markdowns except README
 !**/README.md
 !**/README.MD
+**src/.vs/

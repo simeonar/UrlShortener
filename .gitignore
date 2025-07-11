@@ -51,3 +51,4 @@ Thumbs.db
 **/.vs/UrlShortener/v17/*.futdcache*
 **/.vs/UrlShortener/v17/DocumentLayout*
 PROGRESS.md
+src/.vs/
