@@ -8,7 +8,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<UrlShortener.Core.Services.IQRCodeCache, UrlShortener.Infrastructure.Services.InMemoryQRCodeCache>();
 builder.Services.AddScoped<UrlShortener.Core.Services.IShortCodeGenerator, UrlShortener.Core.Services.ShortCodeGenerator>();
 builder.Services.AddScoped<UrlShortener.Core.Services.IShortCodeUniquenessChecker, UrlShortener.Infrastructure.Repositories.EfShortCodeUniquenessChecker>();
-builder.Services.AddScoped<UrlShortener.Core.Repositories.IShortenedUrlRepository, UrlShortener.Infrastructure.Repositories.InMemoryShortenedUrlRepository>();
+builder.Services.AddSingleton<UrlShortener.Core.Repositories.IShortenedUrlRepository, UrlShortener.Infrastructure.Repositories.InMemoryShortenedUrlRepository>();
 
 
 var app = builder.Build();
