@@ -1,16 +1,27 @@
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddSingleton<UrlShortener.Core.Services.IQRCodeCache, UrlShortener.Infrastructure.Services.InMemoryQRCodeCache>();
+builder.Services.AddScoped<UrlShortener.Core.Services.IShortCodeGenerator, UrlShortener.Core.Services.ShortCodeGenerator>();
+builder.Services.AddScoped<UrlShortener.Core.Services.IShortCodeUniquenessChecker, UrlShortener.Infrastructure.Repositories.EfShortCodeUniquenessChecker>();
+
 
 var app = builder.Build();
+builder.Services.AddScoped<UrlShortener.Core.Repositories.IShortenedUrlRepository, UrlShortener.Infrastructure.Repositories.InMemoryShortenedUrlRepository>();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+else
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -21,6 +32,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.MapControllers();
 app.MapRazorPages();
 
 app.Run();
