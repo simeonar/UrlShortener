@@ -60,5 +60,48 @@ namespace UrlShortener.API.Controllers
             };
             return Ok(chart);
         }
+        /// <summary>
+        /// Returns grouped clicks by day and hour (mock).
+        /// </summary>
+        [HttpGet("{shortCode}/grouped")]
+        public async Task<IActionResult> GetGrouped(string shortCode)
+        {
+            var grouped = new[]
+            {
+                new { date = "2025-07-10", hour = 12, clicks = 3 },
+                new { date = "2025-07-10", hour = 13, clicks = 2 },
+                new { date = "2025-07-11", hour = 9, clicks = 5 }
+            };
+            return Ok(grouped);
+        }
+
+        /// <summary>
+        /// Returns top countries and browsers (mock).
+        /// </summary>
+        [HttpGet("{shortCode}/top")]
+        public async Task<IActionResult> GetTop(string shortCode)
+        {
+            var top = new
+            {
+                countries = new[] { new { country = "RU", clicks = 5 }, new { country = "US", clicks = 3 } },
+                browsers = new[] { new { browser = "Chrome", clicks = 6 }, new { browser = "Firefox", clicks = 2 } }
+            };
+            return Ok(top);
+        }
+
+        /// <summary>
+        /// Returns traffic sources analytics (mock).
+        /// </summary>
+        [HttpGet("{shortCode}/sources")]
+        public async Task<IActionResult> GetSources(string shortCode)
+        {
+            var sources = new[]
+            {
+                new { source = "google.com", clicks = 4 },
+                new { source = "yandex.ru", clicks = 2 },
+                new { source = "direct", clicks = 3 }
+            };
+            return Ok(sources);
+        }
     }
 }
