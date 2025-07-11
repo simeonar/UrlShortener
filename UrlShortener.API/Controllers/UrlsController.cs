@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using UrlShortener.Core.Entities;
 using UrlShortener.Core.Services;
+using UrlShortener.Core.Repositories;
 
 namespace UrlShortener.API.Controllers
 {
@@ -39,9 +40,14 @@ namespace UrlShortener.API.Controllers
                 await memRepo.AddShortCodeAsync(code, entity.OriginalUrl);
             }
 
-            // Формируем полный shortUrl
             var requestScheme = Request.Scheme;
-            var requestHost = Request.Host.Value;
+            var requestHost = Request.Headers["X-Forwarded-Host"].FirstOrDefault()
+                ?? Request.Host.Host;
+            var port = Request.Host.Port;
+            if (!string.IsNullOrEmpty(port?.ToString()) && port != 80 && port != 443)
+            {
+                requestHost += $":{port}";
+            }
             var shortUrl = $"{requestScheme}://{requestHost}/{code}";
             return Ok(new { shortCode = code, shortUrl, originalUrl = entity.OriginalUrl });
         }
