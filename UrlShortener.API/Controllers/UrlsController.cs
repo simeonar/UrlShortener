@@ -33,7 +33,12 @@ namespace UrlShortener.API.Controllers
             var code = await _shortCodeGenerator.GenerateShortCodeAsync(entity);
             entity.ShortCode = code;
             // TODO: Save entity to DB
-            return Ok(new { shortCode = code });
+
+            // Формируем полный shortUrl
+            var requestScheme = Request.Scheme;
+            var requestHost = Request.Host.Value;
+            var shortUrl = $"{requestScheme}://{requestHost}/{code}";
+            return Ok(new { shortCode = code, shortUrl, originalUrl = entity.OriginalUrl });
         }
     }
 

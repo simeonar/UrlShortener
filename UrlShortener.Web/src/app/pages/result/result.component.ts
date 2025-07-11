@@ -7,20 +7,20 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="container py-5" *ngIf="result; else noData">
+    <div class="container py-5" *ngIf="result && result.shortUrl && result.shortCode; else noData">
       <h2>Shortened URL Result</h2>
-      <div class="alert alert-success">
+      <div class="alert alert-success" *ngIf="result.shortUrl">
         <strong>Short URL:</strong>
         <a [href]="result.shortUrl" target="_blank">{{ result.shortUrl }}</a>
       </div>
-      <div class="mb-3">
+      <div class="mb-3" *ngIf="result.originalUrl">
         <strong>Original URL:</strong>
         <span>{{ result.originalUrl }}</span>
       </div>
-      <div class="mb-3">
-        <img [src]="qrCodeUrl" alt="QR Code" width="200" height="200" *ngIf="qrCodeUrl">
+      <div class="mb-3" *ngIf="result.shortUrl">
+        <img [src]="qrCodeUrl" alt="QR Code" width="200" height="200">
       </div>
-      <a routerLink="/" class="btn btn-secondary">Shorten another</a>
+      <a (click)="onShortenAnother()" class="btn btn-secondary">Shorten another</a>
     </div>
     <ng-template #noData>
       <div class="container py-5">
@@ -37,10 +37,17 @@ export class ResultComponent {
   private router = inject(Router);
 
   constructor() {
+    // SSR: сначала пробуем получить из текущей навигации, иначе из history.state
     const nav = this.router.getCurrentNavigation();
-    this.result = nav?.extras?.state?.['result'];
-    if (this.result && this.result.shortCode) {
-      this.qrCodeUrl = `/api/qr/${this.result.shortCode}?size=200&format=png`;
+    this.result = nav?.extras?.state?.['result'] || history.state?.result;
+    if (this.result && this.result.shortUrl) {
+      // QR-код теперь ведет на саму короткую ссылку
+      this.qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(this.result.shortUrl)}`;
     }
+  }
+
+  // Сброс состояния при повторном переходе
+  onShortenAnother() {
+    this.router.navigate(['/'], { state: {} });
   }
 }
