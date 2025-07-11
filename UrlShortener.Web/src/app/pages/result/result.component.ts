@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
-import { Location } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-result',
   standalone: true,
+  imports: [CommonModule],
   template: `
     <div class="container py-5" *ngIf="result; else noData">
       <h2>Shortened URL Result</h2>
@@ -32,11 +34,12 @@ import { Location } from '@angular/common';
 export class ResultComponent {
   result: any;
   qrCodeUrl: string | null = null;
+  private router = inject(Router);
+
   constructor() {
-    const nav = window.history.state;
-    this.result = nav.result;
+    const nav = this.router.getCurrentNavigation();
+    this.result = nav?.extras?.state?.['result'];
     if (this.result && this.result.shortCode) {
-      // Предполагается, что backend возвращает shortCode
       this.qrCodeUrl = `/api/qr/${this.result.shortCode}?size=200&format=png`;
     }
   }
