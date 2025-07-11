@@ -2,6 +2,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSingleton<UrlShortener.Core.Services.IQRCodeCache, UrlShortener.Infrastructure.Services.InMemoryQRCodeCache>();
 
 var app = builder.Build();
 
