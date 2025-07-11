@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -6,7 +7,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
   template: `
     <div class="container py-5">
       <h1>URL Shortener</h1>
@@ -38,7 +39,7 @@ export class HomeComponent {
     if (this.form.invalid) return;
     this.loading = true;
     this.error = null;
-    this.http.post<any>('/api/shorten', { url: this.form.value.url }).subscribe({
+    this.http.post<any>('/api/urls/shorten', { originalUrl: this.form.value.url }).subscribe({
       next: (res) => {
         this.loading = false;
         this.router.navigate(['/result'], { state: { result: res } });
