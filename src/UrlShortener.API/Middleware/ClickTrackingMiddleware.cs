@@ -13,12 +13,13 @@ namespace UrlShortener.API.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly IShortenedUrlRepository _repository;
-        // TODO: Inject service for persisting ClickStatistic
+        private readonly IClickStatisticRepository _clickRepo;
 
-        public ClickTrackingMiddleware(RequestDelegate next, IShortenedUrlRepository repository)
+        public ClickTrackingMiddleware(RequestDelegate next, IShortenedUrlRepository repository, IClickStatisticRepository clickRepo)
         {
             _next = next;
             _repository = repository;
+            _clickRepo = clickRepo;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -32,7 +33,6 @@ namespace UrlShortener.API.Middleware
                 var exists = await _repository.ExistsByShortCodeAsync(shortCode);
                 if (exists)
                 {
-                    // Collect click data
                     var click = new ClickStatistic
                     {
                         Id = Guid.NewGuid(),
@@ -41,9 +41,8 @@ namespace UrlShortener.API.Middleware
                         Referrer = context.Request.Headers["Referer"].ToString(),
                         UserAgent = context.Request.Headers["User-Agent"].ToString(),
                         IpAddress = context.Connection.RemoteIpAddress?.ToString()
-                        // TODO: Country, Browser detection
                     };
-                    // TODO: Save click to DB
+                    await _clickRepo.AddAsync(click);
                 }
             }
             await _next(context);
