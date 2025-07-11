@@ -1,8 +1,6 @@
 # URL-Shortener Dienst
 
 **Projekt:** URL Shortener Service (bit.ly Alternative)
-**Autor:** Semen Arshyn  
-**E-Mail:** semenarshyn@gmail.com  
 **Version:** 1.0  
 
 ---
