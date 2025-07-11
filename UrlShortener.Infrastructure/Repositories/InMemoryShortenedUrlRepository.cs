@@ -9,17 +9,23 @@ namespace UrlShortener.Infrastructure.Repositories
     /// </summary>
     public class InMemoryShortenedUrlRepository : IShortenedUrlRepository
     {
-        private readonly ConcurrentDictionary<string, bool> _shortCodes = new();
+        private readonly ConcurrentDictionary<string, string> _shortCodes = new();
 
         public Task<bool> ExistsByShortCodeAsync(string shortCode)
         {
             return Task.FromResult(_shortCodes.ContainsKey(shortCode));
         }
 
-        // For testing/demo: add a short code
-        public Task AddShortCodeAsync(string shortCode)
+        public Task<string?> GetOriginalUrlByShortCodeAsync(string shortCode)
         {
-            _shortCodes.TryAdd(shortCode, true);
+            _shortCodes.TryGetValue(shortCode, out var originalUrl);
+            return Task.FromResult(originalUrl);
+        }
+
+        // For testing/demo: add a short code and its original URL
+        public Task AddShortCodeAsync(string shortCode, string originalUrl)
+        {
+            _shortCodes.TryAdd(shortCode, originalUrl);
             return Task.CompletedTask;
         }
     }

@@ -10,11 +10,12 @@ namespace UrlShortener.API.Controllers
     public class UrlsController : ControllerBase
     {
         private readonly IShortCodeGenerator _shortCodeGenerator;
-        // TODO: Inject repository/service for persistence
+        private readonly IShortenedUrlRepository _repository;
 
-        public UrlsController(IShortCodeGenerator shortCodeGenerator)
+        public UrlsController(IShortCodeGenerator shortCodeGenerator, IShortenedUrlRepository repository)
         {
             _shortCodeGenerator = shortCodeGenerator;
+            _repository = repository;
         }
 
         /// <summary>
@@ -32,7 +33,11 @@ namespace UrlShortener.API.Controllers
             };
             var code = await _shortCodeGenerator.GenerateShortCodeAsync(entity);
             entity.ShortCode = code;
-            // TODO: Save entity to DB
+            // Save entity to in-memory repository
+            if (_repository is UrlShortener.Infrastructure.Repositories.InMemoryShortenedUrlRepository memRepo)
+            {
+                await memRepo.AddShortCodeAsync(code, entity.OriginalUrl);
+            }
 
             // Формируем полный shortUrl
             var requestScheme = Request.Scheme;

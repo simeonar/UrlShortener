@@ -20,12 +20,9 @@ namespace UrlShortener.API.Controllers
         [HttpGet("/{shortCode}")]
         public async Task<IActionResult> RedirectToOriginal(string shortCode)
         {
-            // TODO: Replace with real DB call to get original URL
-            var exists = await _repository.ExistsByShortCodeAsync(shortCode);
-            if (!exists)
+            var originalUrl = await _repository.GetOriginalUrlByShortCodeAsync(shortCode);
+            if (string.IsNullOrEmpty(originalUrl))
                 return NotFound();
-            // TODO: Replace with real original URL
-            var originalUrl = "https://example.com";
             return Redirect(originalUrl);
         }
     }
