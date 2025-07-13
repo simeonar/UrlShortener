@@ -17,10 +17,37 @@ export class AdminLoginComponent {
 
   constructor(private router: Router) {}
 
-  login() {
+  async login() {
     if (this.username === 'admin' && this.password === 'admin') {
-      localStorage.setItem('admin_logged_in', 'true');
-      this.router.navigate(['/admin']);
+      // Try to login via API and get token
+      try {
+        let resp = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'admin@example.com', password: 'Admin123!@#' })
+        });
+        if (resp.status === 401) {
+          // Try to register admin if not exists
+          await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: 'admin@example.com', password: 'Admin123!@#', isAdmin: true })
+          });
+          // Try login again
+          resp = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: 'admin@example.com', password: 'Admin123!@#' })
+          });
+        }
+        if (!resp.ok) throw new Error('API login failed');
+        const data = await resp.json();
+        localStorage.setItem('admin_logged_in', 'true');
+        localStorage.setItem('admin_token', data.token);
+        this.router.navigate(['/admin']);
+      } catch (e: any) {
+        this.error = 'API login failed: ' + (e.message || e);
+      }
     } else {
       this.error = 'Invalid credentials';
     }

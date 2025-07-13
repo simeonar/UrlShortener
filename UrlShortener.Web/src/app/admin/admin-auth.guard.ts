@@ -1,13 +1,15 @@
-import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
 
 export const adminAuthGuard: CanActivateFn = (route, state) => {
-  // Simple check: admin credentials in localStorage
-  const isAdmin = localStorage.getItem('admin_logged_in') === 'true';
-  if (isAdmin) {
-    return true;
-  } else {
-    // Redirect to admin login (can be /admin?login or /login)
-    return inject(Router).createUrlTree(['/admin-login']);
+  if (typeof window !== 'undefined') {
+    const isAdmin = localStorage.getItem('admin_logged_in') === 'true';
+    if (isAdmin) {
+      return true;
+    } else {
+      return inject(Router).createUrlTree(['/admin-login']);
+    }
   }
+  // SSR: allow navigation to avoid ReferenceError
+  return true;
 };
