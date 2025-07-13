@@ -12,18 +12,20 @@ namespace UrlShortener.API.Controllers
     {
         private readonly IShortCodeGenerator _shortCodeGenerator;
         private readonly IShortenedUrlRepository _repository;
+        private readonly IUserRepository _userRepository;
 
-        public UrlsController(IShortCodeGenerator shortCodeGenerator, IShortenedUrlRepository repository)
+        public UrlsController(IShortCodeGenerator shortCodeGenerator, IShortenedUrlRepository repository, IUserRepository userRepository)
         {
             _shortCodeGenerator = shortCodeGenerator;
             _repository = repository;
+            _userRepository = userRepository;
         }
 
         /// <summary>
         /// Creates a new shortened URL.
         /// </summary>
         [HttpPost("shorten")]
-        public async Task<IActionResult> Shorten([FromBody] ShortenUrlRequest request)
+        public async Task<IActionResult> Shorten([FromBody] ShortenUrlRequest request, [FromHeader(Name = "X-Api-Key")] string apiKey = null)
         {
             var entity = new ShortenedUrl
             {
@@ -31,6 +33,14 @@ namespace UrlShortener.API.Controllers
                 OriginalUrl = request.OriginalUrl,
                 CreatedAt = DateTime.UtcNow
             };
+            if (!string.IsNullOrEmpty(apiKey))
+            {
+                var user = _userRepository.GetByApiKey(apiKey);
+                if (user != null)
+                {
+                    entity.OwnerUserName = user.UserName;
+                }
+            }
             var code = await _shortCodeGenerator.GenerateShortCodeAsync(entity);
             entity.ShortCode = code;
             await _repository.AddAsync(entity);

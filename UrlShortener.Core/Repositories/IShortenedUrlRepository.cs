@@ -40,5 +40,10 @@ namespace UrlShortener.Core.Repositories
         /// </summary>
         /// <param name="url">ShortenedUrl entity to update</param>
         Task UpdateAsync(ShortenedUrl url);
+        /// <summary>
+        /// Gets all shortened URLs.
+        /// </summary>
+        /// <returns>List of all ShortenedUrl entities</returns>
+        Task<List<ShortenedUrl>> GetAllAsync();
     }
 }
