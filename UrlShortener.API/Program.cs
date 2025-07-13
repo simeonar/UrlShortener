@@ -57,6 +57,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+
+// Rate limiting middleware (must be before Authorization)
+app.UseMiddleware<UrlShortener.API.Middleware.RateLimitingMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
