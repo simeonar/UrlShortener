@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
         <a [href]="result.shortUrl" target="_blank">{{ result.shortUrl }}</a>
       </div>
       <div class="mb-3" *ngIf="result.originalUrl">
-        <strong>Original URL:</strong>
+        <strong>Original URL: </strong>
         <span>{{ result.originalUrl }}</span>
       </div>
       <div class="mb-3" *ngIf="result.shortUrl">
