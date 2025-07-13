@@ -1,19 +1,17 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 
 @Component({
-  selector: 'app-login-modal',
+  selector: 'app-register-modal',
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
     <div class="modal-backdrop" (click)="close()"></div>
     <div class="modal-dialog-centered">
-      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="modal-content p-4">
-        <h2 class="mb-3">Sign in</h2>
-        <div *ngIf="registered" class="text-success mb-2">Registration successful! Please log in.</div>
+      <form (ngSubmit)="onSubmit()" #registerForm="ngForm" class="modal-content p-4">
+        <h2 class="mb-3">Register</h2>
         <div class="mb-2">
           <label for="userName" class="form-label">Username</label>
           <input id="userName" name="userName" [(ngModel)]="userName" required class="form-control" />
@@ -22,7 +20,7 @@ import { AuthService } from '../services/auth.service';
           <label for="password" class="form-label">Password</label>
           <input id="password" name="password" type="password" [(ngModel)]="password" required class="form-control" />
         </div>
-        <button type="submit" class="btn btn-primary w-100">Sign in</button>
+        <button type="submit" class="btn btn-primary w-100">Register</button>
         <div *ngIf="error" class="text-danger mt-2">{{ error }}</div>
       </form>
     </div>
@@ -49,28 +47,26 @@ import { AuthService } from '../services/auth.service';
     }
   `]
 })
-export class LoginModalComponent {
+export class RegisterModalComponent {
   userName = '';
   password = '';
   error = '';
-  registered = false;
-  @Output() loggedIn = new EventEmitter<void>();
+  @Output() registered = new EventEmitter<void>();
   @Output() closed = new EventEmitter<void>();
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService) {}
 
   onSubmit() {
     this.error = '';
-    this.auth.login({ userName: this.userName, password: this.password }).subscribe({
+    this.auth.register({ userName: this.userName, password: this.password }).subscribe({
       next: (res) => {
         localStorage.setItem('apiKey', res.apiKey);
         localStorage.setItem('userName', res.userName);
-        this.loggedIn.emit();
+        this.registered.emit();
         this.close();
-        this.router.navigate(['/dashboard']);
       },
       error: () => {
-        this.error = 'Login failed';
+        this.error = 'Registration failed';
       },
     });
   }

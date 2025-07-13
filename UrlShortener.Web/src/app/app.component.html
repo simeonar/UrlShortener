@@ -205,9 +205,10 @@
         </ng-container>
         <ng-template #guestLinks>
           <a href="#" (click)="$event.preventDefault(); openLogin();" class="me-2">Sign in</a>
-          <a routerLink="/register">Register</a>
+          <a href="#" (click)="$event.preventDefault(); openRegister();">Register</a>
         </ng-template>
         <app-login-modal *ngIf="showLoginModal" (closed)="onLoginModalClosed()" (loggedIn)="onLoggedIn()"></app-login-modal>
+        <app-register-modal *ngIf="showRegisterModal" (closed)="onRegisterModalClosed()" (registered)="onRegistered()"></app-register-modal>
       </div>
     </div>
   </div>
