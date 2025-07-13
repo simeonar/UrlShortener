@@ -1,6 +1,9 @@
 
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using UrlShortener.Core.Entities;
 using UrlShortener.Core.Repositories;
 
 namespace UrlShortener.Infrastructure.Repositories
@@ -10,32 +13,7 @@ namespace UrlShortener.Infrastructure.Repositories
     /// </summary>
     public class InMemoryShortenedUrlRepository : IShortenedUrlRepository
     {
-        private readonly ConcurrentDictionary<string, string> _shortCodes = new();
-
-        public Task AddAsync(UrlShortener.Core.Entities.ShortenedUrl url)
-        {
-            _shortCodes.TryAdd(url.ShortCode, url.OriginalUrl);
-            return Task.CompletedTask;
-        }
-
-        public Task UpdateAsync(UrlShortener.Core.Entities.ShortenedUrl url)
-        {
-            _shortCodes[url.ShortCode] = url.OriginalUrl;
-            return Task.CompletedTask;
-        }
-        public Task<UrlShortener.Core.Entities.ShortenedUrl?> GetByShortCodeAsync(string shortCode)
-        {
-            if (_shortCodes.TryGetValue(shortCode, out var originalUrl))
-            {
-                return Task.FromResult<UrlShortener.Core.Entities.ShortenedUrl?>(new UrlShortener.Core.Entities.ShortenedUrl
-                {
-                    ShortCode = shortCode,
-                    OriginalUrl = originalUrl,
-                    CreatedAt = DateTime.UtcNow // Нет хранения даты, ставим сейчас
-                });
-            }
-            return Task.FromResult<UrlShortener.Core.Entities.ShortenedUrl?>(null);
-        }
+        private readonly ConcurrentDictionary<string, ShortenedUrl> _shortCodes = new();
 
         public Task<bool> ExistsByShortCodeAsync(string shortCode)
         {
@@ -44,15 +22,34 @@ namespace UrlShortener.Infrastructure.Repositories
 
         public Task<string?> GetOriginalUrlByShortCodeAsync(string shortCode)
         {
-            _shortCodes.TryGetValue(shortCode, out var originalUrl);
-            return Task.FromResult(originalUrl);
+            if (_shortCodes.TryGetValue(shortCode, out var url))
+                return Task.FromResult<string?>(url.OriginalUrl);
+            return Task.FromResult<string?>(null);
         }
 
-        // For testing/demo: add a short code and its original URL
-        public Task AddShortCodeAsync(string shortCode, string originalUrl)
+        public Task<ShortenedUrl?> GetByShortCodeAsync(string shortCode)
         {
-            _shortCodes.TryAdd(shortCode, originalUrl);
+            if (_shortCodes.TryGetValue(shortCode, out var url))
+                return Task.FromResult<ShortenedUrl?>(url);
+            return Task.FromResult<ShortenedUrl?>(null);
+        }
+
+        public Task AddAsync(ShortenedUrl url)
+        {
+            _shortCodes.TryAdd(url.ShortCode, url);
             return Task.CompletedTask;
+        }
+
+        public Task UpdateAsync(ShortenedUrl url)
+        {
+            _shortCodes[url.ShortCode] = url;
+            return Task.CompletedTask;
+        }
+
+        public Task<List<ShortenedUrl>> GetAllAsync()
+        {
+            return Task.FromResult(_shortCodes.Values.ToList());
         }
     }
 }
+
