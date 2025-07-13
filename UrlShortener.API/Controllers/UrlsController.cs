@@ -25,7 +25,6 @@ namespace UrlShortener.API.Controllers
         [HttpPost("shorten")]
         public async Task<IActionResult> Shorten([FromBody] ShortenUrlRequest request)
         {
-            // TODO: Add validation, persistence, etc.
             var entity = new ShortenedUrl
             {
                 Id = Guid.NewGuid(),
@@ -34,11 +33,7 @@ namespace UrlShortener.API.Controllers
             };
             var code = await _shortCodeGenerator.GenerateShortCodeAsync(entity);
             entity.ShortCode = code;
-            // Save entity to in-memory repository
-            if (_repository is UrlShortener.Infrastructure.Repositories.InMemoryShortenedUrlRepository memRepo)
-            {
-                await memRepo.AddShortCodeAsync(code, entity.OriginalUrl);
-            }
+            await _repository.AddAsync(entity);
 
             var requestScheme = Request.Scheme;
             var requestHost = Request.Headers["X-Forwarded-Host"].FirstOrDefault()
@@ -50,6 +45,38 @@ namespace UrlShortener.API.Controllers
             }
             var shortUrl = $"{requestScheme}://{requestHost}/{code}";
             return Ok(new { shortCode = code, shortUrl, originalUrl = entity.OriginalUrl });
+        }
+
+        /// <summary>
+        /// Gets info about a shortened URL by short code.
+        /// </summary>
+        [HttpGet("{shortCode}")]
+        public async Task<IActionResult> GetByShortCode(string shortCode)
+        {
+            var entity = await _repository.GetByShortCodeAsync(shortCode);
+            if (entity == null)
+                return NotFound(new { message = "Short code not found" });
+
+            var requestScheme = Request.Scheme;
+            var requestHost = Request.Headers["X-Forwarded-Host"].FirstOrDefault()
+                ?? Request.Host.Host;
+            var port = Request.Host.Port;
+            if (!string.IsNullOrEmpty(port?.ToString()) && port != 80 && port != 443)
+            {
+                requestHost += $":{port}";
+            }
+            var shortUrl = $"{requestScheme}://{requestHost}/{entity.ShortCode}";
+
+            return Ok(new
+            {
+                shortCode = entity.ShortCode,
+                shortUrl,
+                originalUrl = entity.OriginalUrl,
+                createdAt = entity.CreatedAt,
+                expirationDate = entity.ExpirationDate,
+                clicksCount = entity.ClicksCount,
+                active = entity.ExpirationDate == null || entity.ExpirationDate > DateTime.UtcNow
+            });
         }
     }
 

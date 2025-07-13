@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using UrlShortener.Core.Entities;
 
 namespace UrlShortener.Core.Repositories
 {
@@ -20,5 +21,24 @@ namespace UrlShortener.Core.Repositories
         /// <param name="shortCode">Short code to look up</param>
         /// <returns>Original URL if found, otherwise null</returns>
         Task<string?> GetOriginalUrlByShortCodeAsync(string shortCode);
+
+        /// <summary>
+        /// Gets the full ShortenedUrl entity by short code.
+        /// </summary>
+        /// <param name="shortCode">Short code to look up</param>
+        /// <returns>ShortenedUrl entity if found, otherwise null</returns>
+        Task<ShortenedUrl?> GetByShortCodeAsync(string shortCode);
+
+        /// <summary>
+        /// Adds a new ShortenedUrl entity.
+        /// </summary>
+        /// <param name="url">ShortenedUrl entity to add</param>
+        Task AddAsync(ShortenedUrl url);
+
+        /// <summary>
+        /// Updates an existing ShortenedUrl entity.
+        /// </summary>
+        /// <param name="url">ShortenedUrl entity to update</param>
+        Task UpdateAsync(ShortenedUrl url);
     }
 }

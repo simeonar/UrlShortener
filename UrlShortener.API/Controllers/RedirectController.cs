@@ -20,10 +20,14 @@ namespace UrlShortener.API.Controllers
         [HttpGet("/{shortCode}")]
         public async Task<IActionResult> RedirectToOriginal(string shortCode)
         {
-            var originalUrl = await _repository.GetOriginalUrlByShortCodeAsync(shortCode);
-            if (string.IsNullOrEmpty(originalUrl))
+            var entity = await _repository.GetByShortCodeAsync(shortCode);
+            if (entity == null)
                 return NotFound();
-            return Redirect(originalUrl);
+
+            entity.ClicksCount++;
+            await _repository.UpdateAsync(entity);
+
+            return Redirect(entity.OriginalUrl);
         }
     }
 }

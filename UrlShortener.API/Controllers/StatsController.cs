@@ -8,11 +8,14 @@ namespace UrlShortener.API.Controllers
     [Route("api/stats")]
     public class StatsController : ControllerBase
     {
-        private readonly IClickStatisticRepository _clickRepo;
 
-        public StatsController(IClickStatisticRepository clickRepo)
+        private readonly IClickStatisticRepository _clickRepo;
+        private readonly IShortenedUrlRepository _urlRepo;
+
+        public StatsController(IClickStatisticRepository clickRepo, IShortenedUrlRepository urlRepo)
         {
             _clickRepo = clickRepo;
+            _urlRepo = urlRepo;
         }
 
         /// <summary>
@@ -21,12 +24,22 @@ namespace UrlShortener.API.Controllers
         [HttpGet("{shortCode}")]
         public async Task<IActionResult> GetStats(string shortCode)
         {
-            // TODO: Replace with real aggregation logic
+            var entity = await _urlRepo.GetByShortCodeAsync(shortCode);
+            if (entity == null)
+                return NotFound();
+
+            // Если нет кликов, показываем дату создания с нулём
+            var byDay = new[]
+            {
+                new { date = entity.CreatedAt.ToString("yyyy-MM-dd"), count = entity.ClicksCount }
+            };
+
             var stats = new
             {
-                shortCode,
-                totalClicks = 42,
-                lastClick = "2025-07-11T12:00:00Z"
+                shortCode = entity.ShortCode,
+                totalClicks = entity.ClicksCount,
+                lastClick = (string?)null, // Можно доработать, если появятся клики
+                byDay
             };
             return Ok(stats);
         }

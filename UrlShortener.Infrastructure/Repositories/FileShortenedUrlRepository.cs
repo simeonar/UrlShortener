@@ -9,6 +9,21 @@ namespace UrlShortener.Infrastructure.Repositories
 {
     public class FileShortenedUrlRepository : IShortenedUrlRepository
     {
+        // ...existing code...
+
+        public async Task<bool> ExistsByShortCodeAsync(string shortCode)
+        {
+            var all = await GetAllAsync();
+            return all.Exists(x => x.ShortCode == shortCode);
+        }
+
+        public async Task<string?> GetOriginalUrlByShortCodeAsync(string shortCode)
+        {
+            var all = await GetAllAsync();
+            var found = all.Find(x => x.ShortCode == shortCode);
+            return found?.OriginalUrl;
+        }
+    
         private readonly string _filePath;
         private readonly object _lock = new();
 

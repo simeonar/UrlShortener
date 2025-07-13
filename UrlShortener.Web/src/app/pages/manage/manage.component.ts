@@ -24,6 +24,7 @@ import { CommonModule } from '@angular/common';
       <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
       <div *ngIf="urlInfo">
         <h5>Short URL: <a [href]="urlInfo.shortUrl" target="_blank">{{ urlInfo.shortUrl }}</a></h5>
+        <div><strong>Short code:</strong> {{ urlInfo.shortCode }}</div>
         <div>Original URL: {{ urlInfo.originalUrl }}</div>
         <div>Created: {{ urlInfo.createdAt | date:'medium' }}</div>
         <div>Status: <span [ngClass]="{'text-success': urlInfo.active, 'text-danger': !urlInfo.active}">{{ urlInfo.active ? 'Active' : 'Inactive' }}</span></div>

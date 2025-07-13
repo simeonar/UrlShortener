@@ -1,4 +1,5 @@
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<UrlShortener.Core.Repositories.IClickStatisticRepository, UrlShortener.Infrastructure.Repositories.InMemoryClickStatisticRepository>();
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
