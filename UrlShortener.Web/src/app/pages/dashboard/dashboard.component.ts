@@ -1,103 +1,57 @@
-import { Component, inject, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import Chart from 'chart.js/auto';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule],
   template: `
     <div class="container py-5">
-      <h2>Statistics Dashboard</h2>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mb-4">
-        <div class="row g-2 align-items-end">
-          <div class="col-auto">
-            <label for="shortCode" class="form-label">Short code</label>
-            <input type="text" class="form-control" id="shortCode" formControlName="shortCode" placeholder="abc123">
-          </div>
-          <div class="col-auto">
-            <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading">Load stats</button>
-          </div>
-        </div>
-      </form>
+      <h2>My Links</h2>
       <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-      <div *ngIf="stats">
-        <h5>Clicks: {{ stats.totalClicks }}</h5>
-        <h6>By day:</h6>
-        <ul>
-          <li *ngFor="let d of stats.byDay">{{ d.date }}: {{ d.count }}</li>
-        </ul>
-        <canvas #chartCanvas width="400" height="200"></canvas>
-      </div>
+      <div *ngIf="!links && !error">Loading...</div>
+      <table *ngIf="links" class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Short URL</th>
+            <th>Short Code</th>
+            <th>Original URL</th>
+            <th>Created</th>
+            <th>Clicks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let link of links">
+            <td><a [href]="link.shortUrl" target="_blank">{{ link.shortUrl }}</a></td>
+            <td>{{ link.shortCode }}</td>
+            <td>{{ link.originalUrl }}</td>
+            <td>{{ link.createdAt | date:'medium' }}</td>
+            <td>{{ link.clicksCount }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   `,
   styles: [``]
 })
-export class DashboardComponent implements AfterViewInit {
-  form = inject(FormBuilder).group({
-    shortCode: ['', Validators.required]
-  });
-  loading = false;
+export class DashboardComponent implements OnInit {
+  links: any[] | null = null;
   error: string | null = null;
-  stats: any = null;
   private http = inject(HttpClient);
-  @ViewChild('chartCanvas') chartCanvas?: ElementRef<HTMLCanvasElement>;
-  chart: Chart | null = null;
-
-  ngAfterViewInit() {
-    // Chart will be rendered after stats loaded
-  }
-
-  onSubmit() {
-    if (this.form.invalid) return;
-    this.loading = true;
-    this.error = null;
-    this.stats = null;
-    if (this.chart) {
-      this.chart.destroy();
-      this.chart = null;
+  ngOnInit() {
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) {
+      this.error = 'Not authenticated.';
+      return;
     }
-    const code = this.form.value.shortCode;
-    this.http.get<any>(`/api/stats/${code}`).subscribe({
+    this.http.get<any[]>('/api/userlinks', {
+      headers: new HttpHeaders({ 'X-Api-Key': apiKey })
+    }).subscribe({
       next: (res) => {
-        this.loading = false;
-        this.stats = res;
-        setTimeout(() => this.renderChart(), 0);
+        this.links = res;
       },
       error: (err) => {
-        this.loading = false;
-        this.error = err?.error?.message || 'Failed to load stats.';
-      }
-    });
-  }
-
-  renderChart() {
-    if (!this.chartCanvas || !this.stats?.byDay) return;
-    const ctx = this.chartCanvas.nativeElement.getContext('2d');
-    if (!ctx) return;
-    const labels = this.stats.byDay.map((d: any) => d.date);
-    const data = this.stats.byDay.map((d: any) => d.count);
-    this.chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [{
-          label: 'Clicks by day',
-          data,
-          backgroundColor: 'rgba(54, 162, 235, 0.5)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-        },
-        scales: {
-          y: { beginAtZero: true }
-        }
+        this.error = err?.error?.message || 'Failed to load links.';
       }
     });
   }

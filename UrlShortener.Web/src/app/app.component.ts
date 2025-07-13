@@ -10,5 +10,19 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
 })
 export class AppComponent {
-  title = 'UrlShortener.Web';
+  get userName(): string | null {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('userName');
+    }
+    return null;
+  }
+  logout() {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.removeItem('apiKey');
+      localStorage.removeItem('userName');
+      window.location.href = '/login';
+    }
+  }
 }
+
+
