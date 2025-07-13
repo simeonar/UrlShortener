@@ -1,4 +1,5 @@
 // TODO: For dev mode, short links should be proxied to backend (e.g., via nginx or custom dev proxy).
+// TODO: For dev mode, short links should be proxied to backend (e.g., via nginx or custom dev proxy).
 // Now, short links are generated for backend port directly using current host. Implement proper proxy for seamless UX later.
 
 // Backend port for dev mode. Change if backend runs on another port.
@@ -65,17 +66,42 @@ import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http'
               <td>
                 <button class="btn btn-outline-secondary btn-sm me-1" (click)="copy(link)">Copy</button>
                 <button class="btn btn-outline-danger btn-sm me-1" (click)="delete(link.shortCode)">Delete</button>
-                <button class="btn btn-outline-info btn-sm" (click)="stats(link.shortCode)">Stats</button>
+                <button class="btn btn-outline-info btn-sm me-1" (click)="stats(link.shortCode)">Stats</button>
+                <button class="btn btn-outline-dark btn-sm" (click)="showQr(link)">QR</button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+      <!-- QR Modal -->
+      <div class="modal fade show" tabindex="-1" [ngStyle]="{display: showQrModal ? 'block' : 'none', background: 'rgba(0,0,0,0.5)'}" *ngIf="showQrModal">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">QR Code</h5>
+              <button type="button" class="btn-close" (click)="closeQrModal()"></button>
+            </div>
+            <div class="modal-body text-center">
+              <img [src]="getQrDataUrl(qrUrl)" alt="QR Code" />
+              <div class="mt-2"><a [href]="qrUrl" target="_blank">{{ qrUrl }}</a></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="closeQrModal()">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End QR Modal -->
     </div>
   `,
   styles: [``]
 })
 export class DashboardComponent implements OnInit {
+  getQrDataUrl(url: string): string {
+    if (!url || !this.links) return '';
+    const link = this.links.find(l => l.shortUrl === url);
+    return link?.qrDataUrl || '';
+  }
   links: any[] | null = null;
   error: string | null = null;
   copyMessage: string | null = null;
@@ -83,6 +109,19 @@ export class DashboardComponent implements OnInit {
   guestResult: any = null;
   private http = inject(HttpClient);
   private router = inject(Router);
+
+  showQrModal: boolean = false;
+  qrUrl: string = '';
+
+  showQr(link: any) {
+    this.qrUrl = link.shortUrl || '';
+    this.showQrModal = true;
+  }
+
+  closeQrModal() {
+    this.showQrModal = false;
+    this.qrUrl = '';
+  }
 
   onGuestSearch() {
     this.guestResult = null;
@@ -110,7 +149,16 @@ export class DashboardComponent implements OnInit {
       headers: new HttpHeaders({ 'X-Api-Key': apiKey })
     }).subscribe({
       next: (res) => {
-        this.links = res;
+        const host = window.location.hostname;
+        this.links = res.map(link => {
+          // shortUrl
+          if (!link.shortUrl && link.shortCode) {
+            link.shortUrl = `http://${host}:${BACKEND_PORT}/` + link.shortCode;
+          }
+          // qrDataUrl
+          link.qrDataUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(link.shortUrl)}`;
+          return link;
+        });
       },
       error: (err) => {
         this.error = err?.error?.message || 'Failed to load links.';
@@ -169,5 +217,9 @@ export class DashboardComponent implements OnInit {
 
   stats(shortCode: string) {
     this.router.navigate([`/stats/${shortCode}`]);
+  }
+
+  encodeURIComponentUrl(url: string): string {
+    return encodeURIComponent(url);
   }
 }
