@@ -27,6 +27,7 @@ export class LoginComponent {
     this.auth.login({ userName: this.userName, password: this.password }).subscribe({
       next: (res) => {
         localStorage.setItem('apiKey', res.apiKey);
+        localStorage.setItem('userName', res.userName);
         this.router.navigate(['/dashboard']); // или на главную, если dashboard нет
       },
       error: (err) => {

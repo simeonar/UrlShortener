@@ -23,6 +23,7 @@ export class RegisterComponent {
     this.auth.register({ userName: this.userName, password: this.password }).subscribe({
       next: (res) => {
         localStorage.setItem('apiKey', res.apiKey);
+        localStorage.setItem('userName', res.userName);
         this.router.navigate(['/login'], { state: { registered: true } });
       },
       error: (err) => {

@@ -38,7 +38,9 @@ export class HomeComponent {
     if (this.form.invalid) return;
     this.loading = true;
     this.error = null;
-    this.http.post<any>('/api/urls/shorten', { originalUrl: this.form.value.url }).subscribe({
+    const apiKey = localStorage.getItem('apiKey');
+    const options = apiKey ? { headers: { 'X-Api-Key': apiKey } } : {};
+    this.http.post<any>('/api/urls/shorten', { originalUrl: this.form.value.url }, options).subscribe({
       next: (res) => {
         this.loading = false;
         this.router.navigate(['/result'], { state: { result: res } });
