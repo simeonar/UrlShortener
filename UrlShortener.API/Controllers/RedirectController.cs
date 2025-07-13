@@ -31,6 +31,9 @@ namespace UrlShortener.API.Controllers
             if (entity == null)
                 return NotFound();
 
+            if (entity.IsBlocked)
+                return StatusCode(403, "This link is blocked by admin.");
+
             entity.ClicksCount++;
             await _repository.UpdateAsync(entity);
 

@@ -1,1 +1,59 @@
-<p>admin-page works!</p>
+<div class="admin-panel">
+  <h2>Admin Panel</h2>
+  <button (click)="showLinks()">Show Links</button>
+  <button (click)="showUsers()">Show Users</button>
+  <button (click)="showStats()">Show Stats</button>
+  <button (click)="showBlockedLinks()">Show Blocked Links</button>
+  <button (click)="logout()">Logout</button>
+  <div *ngIf="error" style="color:red">{{error}}</div>
+
+  <div *ngIf="links.length">
+    <h3>All Links</h3>
+    <table border="1">
+      <tr><th>ShortCode</th><th>OriginalUrl</th><th>UserId</th><th>Blocked</th><th>Actions</th></tr>
+      <tr *ngFor="let link of links">
+        <td>{{link.shortCode}}</td>
+        <td>{{link.originalUrl}}</td>
+        <td>{{link.userId}}</td>
+        <td>{{link.isBlocked ? 'Yes' : 'No'}}</td>
+        <td>
+          <button *ngIf="!link.isBlocked" (click)="blockLink(link.shortCode)">Block</button>
+          <button *ngIf="link.isBlocked" (click)="unblockLink(link.shortCode)">Unblock</button>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div *ngIf="users.length">
+    <h3>All Users</h3>
+    <table border="1">
+      <tr><th>Email</th><th>Id</th></tr>
+      <tr *ngFor="let user of users">
+        <td>{{user.email}}</td>
+        <td>{{user.id}}</td>
+      </tr>
+    </table>
+  </div>
+
+  <div *ngIf="stats">
+    <h3>System Statistics</h3>
+    <ul>
+      <li>Total Links: {{stats.totalLinks}}</li>
+      <li>Total Users: {{stats.totalUsers}}</li>
+      <li>Total Clicks: {{stats.totalClicks}}</li>
+    </ul>
+  </div>
+
+  <div *ngIf="blockedLinks.length">
+    <h3>Blocked Links</h3>
+    <table border="1">
+      <tr><th>ShortCode</th><th>OriginalUrl</th><th>UserId</th><th>Actions</th></tr>
+      <tr *ngFor="let link of blockedLinks">
+        <td>{{link.shortCode}}</td>
+        <td>{{link.originalUrl}}</td>
+        <td>{{link.userId}}</td>
+        <td><button (click)="unblockLink(link.shortCode)">Unblock</button></td>
+      </tr>
+    </table>
+  </div>
+</div>
