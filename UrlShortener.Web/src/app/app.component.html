@@ -204,9 +204,10 @@
           <button (click)="logout()" class="btn btn-link p-0">Logout</button>
         </ng-container>
         <ng-template #guestLinks>
-          <a routerLink="/login" class="me-2">Login</a>
+          <a href="#" (click)="$event.preventDefault(); openLogin();" class="me-2">Sign in</a>
           <a routerLink="/register">Register</a>
         </ng-template>
+        <app-login-modal *ngIf="showLoginModal" (closed)="onLoginModalClosed()" (loggedIn)="onLoggedIn()"></app-login-modal>
       </div>
     </div>
   </div>
