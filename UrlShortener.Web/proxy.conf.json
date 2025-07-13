@@ -3,5 +3,12 @@
     "target": "http://192.168.0.6:5212",
     "secure": false,
     "changeOrigin": true
+  },
+  "/[a-zA-Z0-9]{6,}": {
+    "target": "http://192.168.0.6:5212",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": { "^/": "/" }
   }
 }

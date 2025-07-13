@@ -72,5 +72,18 @@ namespace UrlShortener.Infrastructure.Repositories
                 }
             }
         }
+        public async Task DeleteAsync(Guid id)
+        {
+            lock (_lock)
+            {
+                var all = GetAllAsync().Result;
+                var idx = all.FindIndex(x => x.Id == id);
+                if (idx >= 0)
+                {
+                    all.RemoveAt(idx);
+                    File.WriteAllText(_filePath, JsonSerializer.Serialize(all));
+                }
+            }
+        }
     }
 }

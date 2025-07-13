@@ -50,6 +50,15 @@ namespace UrlShortener.Infrastructure.Repositories
         {
             return Task.FromResult(_shortCodes.Values.ToList());
         }
+        public Task DeleteAsync(Guid id)
+        {
+            var item = _shortCodes.Values.FirstOrDefault(x => x.Id == id);
+            if (item != null)
+            {
+                _shortCodes.TryRemove(item.ShortCode, out _);
+            }
+            return Task.CompletedTask;
+        }
     }
 }
 

@@ -26,6 +26,10 @@ export const appRoutes: Routes = [
     path: 'manage',
     loadComponent: () => import('./pages/manage/manage.component').then(m => m.ManageComponent)
   },
+  {
+    path: 'stats/:shortCode',
+    loadComponent: () => import('./pages/stats/stats.component').then(m => m.StatsComponent)
+  },
   // Default route: redirect authenticated users to home, otherwise to login
   { path: '', redirectTo: '/home', pathMatch: 'full' },
 ];

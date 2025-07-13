@@ -26,5 +26,18 @@ namespace UrlShortener.API.Controllers
             var links = allLinks.Where(u => u.OwnerUserName == user.UserName);
             return Ok(links);
         }
+        [HttpDelete("{shortCode}")]
+        public async Task<IActionResult> Delete(string shortCode, [FromHeader(Name = "X-Api-Key")] string apiKey)
+        {
+            var user = _userRepository.GetByApiKey(apiKey);
+            if (user == null)
+                return Unauthorized();
+            var allLinks = await _urlRepository.GetAllAsync();
+            var link = allLinks.FirstOrDefault(u => u.ShortCode == shortCode && u.OwnerUserName == user.UserName);
+            if (link == null)
+                return NotFound();
+            await _urlRepository.DeleteAsync(link.Id);
+            return NoContent();
+        }
     }
 }

@@ -45,5 +45,11 @@ namespace UrlShortener.Core.Repositories
         /// </summary>
         /// <returns>List of all ShortenedUrl entities</returns>
         Task<List<ShortenedUrl>> GetAllAsync();
+
+        /// <summary>
+        /// Deletes a ShortenedUrl entity by id.
+        /// </summary>
+        /// <param name="id">Id of the ShortenedUrl entity to delete</param>
+        Task DeleteAsync(Guid id);
     }
 }
