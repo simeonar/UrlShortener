@@ -1,8 +1,8 @@
-
 # URL-Shortener Dienst
 
-**Projekt:** URL Shortener Service (bit.ly Alternative)   
+**Projekt:** URL Shortener Service (bit.ly Alternative)  
 **Version:** 1.0  
+**Repository:** [https://github.com/simeonar/UrlShortener](https://github.com/simeonar/UrlShortener)
 
 ---
 
@@ -12,60 +12,81 @@ Ein umfassender URL-Shortener-Dienst, der Link-Kürzung, benutzerdefinierte Alia
 
 ---
 
-## Architektur & Phasen
+## Schnellstart
 
-Das Projekt ist in mehrere Phasen und Module gegliedert, um eine saubere, skalierbare Architektur zu gewährleisten:
+### Backend (API) starten
 
-### 1. Projektaufbau & Grundarchitektur
-- ASP.NET Core Web API (.NET 8)
-- Struktur: `src/` (API, Core, Infrastructure, Web), `tests/`, `docker/`
-- Wichtige Abhängigkeiten: Entity Framework Core, AutoMapper, FluentValidation, Serilog, Swagger, QRCoder
+```sh
+dotnet run --urls=http://0.0.0.0:5212
+```
+Startet die ASP.NET Core API auf Port 5212, erreichbar unter http://localhost:5212 oder http://<Ihre_IP>:5212
 
-### 2. Kernfunktionalität: Link-Kürzung
-- Base62-Algorithmus für Kurzcode (6-8 Zeichen, eindeutig)
-- API-Endpunkte:
-  - `POST /api/shorten` – Kurzlink erstellen (mit optionalem Alias/Ablaufdatum)
-  - `GET /api/urls/{shortCode}` – Link-Info abrufen
-  - `GET /{shortCode}` – Weiterleitung
-- Validierung: URL-Format, Alias-Verfügbarkeit, Längen-/Zeichenbeschränkungen
+### Frontend (Angular) starten
 
-### 3. Analyse & Statistik
-- Klick-Tracking (Middleware): Zeit, IP (anonymisiert), User-Agent, Referrer, Land
-- Statistik-API:
-  - `GET /api/stats/{shortCode}` – Übersicht
-  - `GET /api/stats/{shortCode}/clicks` – Details
-  - `GET /api/stats/{shortCode}/chart` – Chart-Daten
-- Features: Gruppierung (Tag/Stunde), Top-Länder/Browsers, Traffic-Quellen
-
-### 4. QR-Code-Generierung
-- `GET /api/qr/{shortCode}` – QR-Code als Bild (Größe/Format wählbar)
-- Caching: In-Memory & Dateisystem
-
-### 5. Web-Oberfläche (Angular)
-- Startseite mit Kürzungsformular
-- Ergebnisseite mit QR-Code
-- Statistik-Dashboard
-- Linkverwaltung
-- Technologien: Angular, Bootstrap, Chart.js
-
-### 6. Erweiterungen (Optional)
-- Nutzerverwaltung (Registrierung, Login, API-Keys)
-- Admin-Panel (Moderation, Systemstatistik)
-- API-Rate-Limiting (IP-basiert, Nutzer-basiert)
-
-### 7. Testen
-- Unit-Tests: Business-Logik, Validierung, Code-Generierung
-- Integrationstests: API, DB, Redirects
-- Performance-Tests: Last, Antwortzeit
-
-### 8. Deployment & Monitoring
-- Dockerfile, docker-compose
-- Cloud-Deployment (Azure/AWS), Cloud-DB, CDN
-- Monitoring: Application Insights, Logging, Metriken
+```sh
+npm start -- --host 0.0.0.0
+```
+Startet die Angular SPA auf http://localhost:4200 (oder http://<Ihre_IP>:4200)
 
 ---
 
-## Datenmodell (Beispiel)
+## Projektstruktur
+
+- `UrlShortener.API/` — ASP.NET Core Web API (Backend)
+- `UrlShortener.Core/` — Geschäftslogik, Modelle, Services
+- `UrlShortener.Infrastructure/` — Infrastruktur-Services, Repositories
+- `UrlShortener.Web/` — Angular SPA (Frontend)
+- `tests/` — Unit- und Integrationstests
+- `data/` — JSON-Dateien für Links und Benutzer
+- `docker/` — Dockerfile und Container-Setup
+- `docs/` — Dokumentation, Anleitungen
+- `PROGRESS.md` — Fortschrittstracker
+
+---
+
+## Funktionsübersicht
+
+- **Kernfunktionalität:** Kürzen von URLs mit Base62-Algorithmus (6-8 Zeichen)
+- **Benutzerdefinierte Features:** Aliase, Ablaufdatum, Aktivierung/Deaktivierung
+- **Analytics:** Klick-Tracking (Zeit, IP anonymisiert, User-Agent, Referrer, Land)
+- **Statistiken:** Übersicht, Details, Diagramme mit Gruppierung nach Tag/Stunde
+- **QR-Code-Generierung:** Mit Caching (In-Memory & Dateisystem)
+- **Web-Oberfläche:** Moderne Angular SPA mit Dashboard und Linkverwaltung
+- **Nutzerverwaltung:** Login/Registrierung, API-Key-Verwaltung
+- **Admin-Panel:** Moderation, Systemstatistik, Link-Blockierung
+- **Rate-Limiting:** IP- und nutzerbasierte Begrenzungen
+
+---
+
+## API-Endpunkte
+
+### Kernfunktionen
+- `POST /api/shorten` – Kurzlink erstellen (mit optionalem Alias/Ablaufdatum)
+- `GET /api/urls/{shortCode}` – Link-Info abrufen
+- `GET /{shortCode}` – Weiterleitung zum ursprünglichen Link
+
+### Statistiken
+- `GET /api/stats/{shortCode}` – Statistik-Übersicht
+- `GET /api/stats/{shortCode}/clicks` – Detaillierte Klick-Daten
+- `GET /api/stats/{shortCode}/chart` – Chart-Daten für Diagramme
+
+### QR-Code
+- `GET /api/qr/{shortCode}` – QR-Code als Bild (Größe/Format wählbar)
+
+---
+
+## Technologie-Stack
+
+- **Backend:** ASP.NET Core 8, Entity Framework Core, Serilog, QRCoder
+- **Frontend:** Angular, Bootstrap 5, Chart.js
+- **Datenbank:** SQL Server/PostgreSQL
+- **Caching:** Redis, In-Memory
+- **Deployment:** Docker, Azure/AWS, GitHub Actions (CI/CD)
+- **Weitere:** AutoMapper, FluentValidation, Swagger
+
+---
+
+## Datenmodell
 
 ```csharp
 public class ShortenedUrl
@@ -95,73 +116,84 @@ public class ClickStatistic
 
 ---
 
-## Technologie-Stack
+## Entwicklungsfortschritt
 
-- **Backend:** ASP.NET Core 8, Entity Framework Core, Serilog, QRCoder
-- **Frontend:** Angular, Bootstrap 5, Chart.js
-- **Datenbank:** SQL Server/PostgreSQL
-- **Caching:** Redis
-- **Deployment:** Docker, Azure/AWS, GitHub Actions (CI/CD)
+### ✅ Erledigt
+- Grundarchitektur und Hauptfunktionen
+- Linkkürzung mit Base62-Algorithmus
+- API für Kürzung, Info, Redirect, Statistik, QR
+- Klick-Tracking und Statistikaggregation
+- Web-UI: Kürzung, Ergebnis, Dashboard, Verwaltung
+- Nutzer-Login und Speicherung
+- Rate Limiting für Gäste und Nutzer
+- Admin-Panel mit Link-Blockierung und Systemstatistik
 
----
+### 🔄 In Arbeit
+- Dockerfile, docker-compose, Cloud-Deployment
+- Monitoring, Logging, Metriken
+- Erweiterte Nutzerbereich-Features
+- API-Key-Verwaltung
+- Testabdeckung (Unit-, Integrations-, Lasttests)
+- Code Style, Pre-Commit Hooks, Badges
 
-## API-Überblick (Auswahl)
-
-- `POST /api/shorten` – Kurzlink erstellen
-- `GET /api/urls/{shortCode}` – Link-Info
-- `GET /{shortCode}` – Redirect
-- `GET /api/stats/{shortCode}` – Statistik
-- `GET /api/qr/{shortCode}` – QR-Code
-
----
-
-## Zeitplan (Beispiel)
-
-- Phase 1-2: 3-5 Tage (Kernfunktionalität)
-- Phase 3: 2-3 Tage (Analytics)
-- Phase 4: 1-2 Tage (QR)
-- Phase 5: 3-5 Tage (Web)
-- Phase 6: 2-4 Tage (Erweiterungen)
-- Phase 7: 2-3 Tage (Tests)
-- Phase 8: 1-2 Tage (Deployment)
-
-**Gesamtdauer:** 2-3 Wochen für die vollständige Umsetzung
-
----
-
-## Portfolio-Highlights
-
-1. **README.md** mit Projektbeschreibung & API
-2. **Swagger-Dokumentation** mit Beispielen
-3. **Unit- & Integrationstests**
-4. **Dockerfiles** für einfachen Start
-5. **Live-Demo** mit Echtdaten
-
----
-
-## Mögliche Erweiterungen
-
-- Bulk-API für Massenkürzung
-- Webhooks für Benachrichtigungen
+### ❌ Nicht umgesetzt
+- Webhooks, Bulk-API
 - Social-Media-Integration
-- White-Label-Lösung für Unternehmen
-- Mobile-App-API
+- Mobile-App
+- White-Label-Anpassungen
 
 ---
 
-## Projektstart
+## Architektur & Entwicklungsphasen
 
-1. Repository klonen
-2. Backend & Frontend gemäß Anleitung aufsetzen
-3. Docker-Container bauen & starten (optional)
-4. Swagger-UI für API-Tests nutzen
+### Phase 1-2: Grundarchitektur & Kernfunktionalität (3-5 Tage)
+- ASP.NET Core Web API Setup
+- Base62-Algorithmus für Kurzcode
+- Validierung und Speicherung
+
+### Phase 3: Analyse & Statistik (2-3 Tage)
+- Klick-Tracking-Middleware
+- Statistik-API mit Aggregation
+- Traffic-Quellenanalyse
+
+### Phase 4: QR-Code-Generierung (1-2 Tage)
+- QR-Code-Service mit Caching
+- Verschiedene Größen und Formate
+
+### Phase 5: Web-Oberfläche (3-5 Tage)
+- Angular SPA mit Bootstrap
+- Dashboard und Linkverwaltung
+- Chart.js für Statistiken
+
+### Phase 6: Erweiterungen (2-4 Tage)
+- Nutzerverwaltung
+- Admin-Panel
+- Rate-Limiting
+
+### Phase 7: Testen (2-3 Tage)
+- Unit-Tests für Business-Logik
+- Integrationstests für API
+- Performance-Tests
+
+### Phase 8: Deployment (1-2 Tage)
+- Docker-Container
+- Cloud-Deployment
+- Monitoring-Setup
+
+**Geschätzte Gesamtdauer:** 2-3 Wochen
+
+---
+
+## Test-Status
+
+- [ ] Unit-Tests: Geschäftslogik, Validierung, Code-Generierung
+- [ ] Integrationstests: API, Datenbank, Redirects
+- [ ] Lasttests: Performance, Antwortzeit
+
+Tests sind teilweise vorbereitet, die Abdeckung wird kontinuierlich ausgebaut.
 
 ---
 
 ## Lizenz
 
 MIT License
-
----
-
-*Dieses Projekt demonstriert die Fähigkeit, ein vollständiges, produktionsreifes Web- und Cloud-System zu entwerfen und umzusetzen. Die README wurde erweitert, um die gesamte Projektarchitektur und Planung zu zeigen.*
