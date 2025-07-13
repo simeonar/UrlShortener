@@ -1,5 +1,4 @@
 import { signature } from './copyright';
-  signatureValue = signature;
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -14,6 +13,7 @@ import { RegisterModalComponent } from './register-modal/register-modal.componen
   imports: [CommonModule, RouterModule, LoginModalComponent, RegisterModalComponent],
 })
 export class AppComponent {
+  signatureValue = signature;
   showLoginModal = false;
   showRegisterModal = false;
   get userName(): string | null {
