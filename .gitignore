@@ -29,4 +29,5 @@ Thumbs.db
 *.db
 **/.vs/UrlShortener/v17/*.futdcache*
 **/.vs/UrlShortener/v17/DocumentLayout*
+data/shortened_urls.json
 src/.vs/
