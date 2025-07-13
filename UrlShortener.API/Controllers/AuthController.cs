@@ -1,0 +1,62 @@
+using Microsoft.AspNetCore.Mvc;
+using UrlShortener.Core.Entities;
+using UrlShortener.Core.Repositories;
+using System.Security.Cryptography;
+using System.Text;
+
+namespace UrlShortener.API.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AuthController : ControllerBase
+    {
+        private readonly IUserRepository _userRepository;
+        public AuthController(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
+
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] RegisterRequest request)
+        {
+            if (_userRepository.GetByUserName(request.UserName) != null)
+                return Conflict("User already exists");
+
+            var user = new User
+            {
+                UserName = request.UserName,
+                PasswordHash = HashPassword(request.Password),
+                ApiKey = Guid.NewGuid().ToString()
+            };
+            _userRepository.Add(user);
+            return Ok(new { user.UserName, user.ApiKey });
+        }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginRequest request)
+        {
+            var user = _userRepository.GetByUserName(request.UserName);
+            if (user == null || user.PasswordHash != HashPassword(request.Password))
+                return Unauthorized();
+            return Ok(new { user.UserName, user.ApiKey });
+        }
+
+        private static string HashPassword(string password)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(bytes);
+        }
+    }
+
+    public class RegisterRequest
+    {
+        public string UserName { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+    public class LoginRequest
+    {
+        public string UserName { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+}

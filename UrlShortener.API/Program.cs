@@ -14,6 +14,7 @@ builder.Services.AddScoped<UrlShortener.Core.Services.IShortCodeUniquenessChecke
 // Ensure the data directory and file exist
 var dataDir = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "data");
 var filePath = Path.Combine(dataDir, "shortened_urls.json");
+var usersFilePath = Path.Combine(dataDir, "users.json");
 if (!Directory.Exists(dataDir))
 {
     Directory.CreateDirectory(dataDir);
@@ -23,8 +24,17 @@ if (!File.Exists(filePath))
     File.WriteAllText(filePath, "[]");
 }
 
+if (!File.Exists(usersFilePath))
+{
+    File.WriteAllText(usersFilePath, "[]");
+}
+
 builder.Services.AddSingleton<UrlShortener.Core.Repositories.IShortenedUrlRepository>(
     provider => new UrlShortener.Infrastructure.Repositories.FileShortenedUrlRepository(filePath)
+);
+
+builder.Services.AddSingleton<UrlShortener.Core.Repositories.IUserRepository>(
+    provider => new UrlShortener.Infrastructure.Repositories.FileUserRepository(usersFilePath)
 );
 
 
