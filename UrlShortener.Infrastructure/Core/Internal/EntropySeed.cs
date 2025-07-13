@@ -1,19 +1,27 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Linq;
+using System;
+using System.Resources;
 
 namespace System.Profile.Platform
 {
     public static class EntropySeed
     {
-        private static readonly string expected = "F3E2B8D34A0D1B2A1B1A2B3C4D5E6F7A8B9C0D1E2F3A4B5C6D7E8F9A0B1C2D3"; 
-
         public static bool IsReady()
         {
+            // Get encrypted hash from resources
+            string encrypted = System.Profile.Platform.Resources.EntropyPayload; // Use generated Resources class
+            byte[] obfuscated = Convert.FromBase64String(encrypted);
+            byte[] decoded = obfuscated.Select(b => (byte)(b ^ 0x4F)).ToArray();
+            string expectedHash = Encoding.UTF8.GetString(decoded);
+
             using var sha = SHA256.Create();
-            var raw = PayloadCache.GetInternalOffset();
-            var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(raw));
-            var hex = BitConverter.ToString(hash).Replace("-", "");
-            return hex == expected;
+            string input = PayloadCache.GetInternalOffset();
+            byte[] actualHash = sha.ComputeHash(Encoding.UTF8.GetBytes(input));
+            string actualHex = BitConverter.ToString(actualHash).Replace("-", "");
+
+            return actualHex == expectedHash;
         }
     }
 }
