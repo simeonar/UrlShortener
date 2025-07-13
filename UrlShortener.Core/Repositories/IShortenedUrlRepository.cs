@@ -1,5 +1,7 @@
+
 using System.Threading.Tasks;
 using UrlShortener.Core.Entities;
+
 
 namespace UrlShortener.Core.Repositories
 {
@@ -45,6 +47,12 @@ namespace UrlShortener.Core.Repositories
         /// </summary>
         /// <returns>List of all ShortenedUrl entities</returns>
         Task<List<ShortenedUrl>> GetAllAsync();
+
+        /// <summary>
+        /// Deletes a ShortenedUrl entity by short code.
+        /// </summary>
+        /// <param name="shortCode">Short code of the ShortenedUrl entity to delete</param>
+        Task DeleteByShortCodeAsync(string shortCode);
 
         /// <summary>
         /// Deletes a ShortenedUrl entity by id.

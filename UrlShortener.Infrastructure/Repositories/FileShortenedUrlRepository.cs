@@ -9,6 +9,19 @@ namespace UrlShortener.Infrastructure.Repositories
 {
     public class FileShortenedUrlRepository : IShortenedUrlRepository
     {
+        public async Task DeleteByShortCodeAsync(string shortCode)
+        {
+            lock (_lock)
+            {
+                var all = GetAllAsync().Result;
+                var idx = all.FindIndex(x => x.ShortCode == shortCode);
+                if (idx >= 0)
+                {
+                    all.RemoveAt(idx);
+                    File.WriteAllText(_filePath, JsonSerializer.Serialize(all));
+                }
+            }
+        }
         // ...existing code...
 
         public async Task<bool> ExistsByShortCodeAsync(string shortCode)

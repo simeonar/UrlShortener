@@ -15,6 +15,12 @@ namespace UrlShortener.Infrastructure.Repositories
     {
         private readonly ConcurrentDictionary<string, ShortenedUrl> _shortCodes = new();
 
+        public Task DeleteByShortCodeAsync(string shortCode)
+        {
+            _shortCodes.TryRemove(shortCode, out _);
+            return Task.CompletedTask;
+        }
+
         public Task<bool> ExistsByShortCodeAsync(string shortCode)
         {
             return Task.FromResult(_shortCodes.ContainsKey(shortCode));
