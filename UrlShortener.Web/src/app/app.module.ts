@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AppComponent } from './app.component';
+import { AdminModule } from './admin.module';
 // import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
@@ -18,6 +19,7 @@ import { AppComponent } from './app.component';
     AppComponent,
     LoginComponent,
     RegisterComponent,
+    AdminModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

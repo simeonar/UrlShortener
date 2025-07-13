@@ -1,5 +1,5 @@
-
 import { Routes } from '@angular/router';
+import { adminAuthGuard } from './admin/admin-auth.guard';
 
 export const appRoutes: Routes = [
   {
@@ -29,6 +29,15 @@ export const appRoutes: Routes = [
   {
     path: 'stats/:shortCode',
     loadComponent: () => import('./pages/stats/stats.component').then(m => m.StatsComponent)
+  },
+  {
+    path: 'admin',
+    loadComponent: () => import('./admin/admin-page/admin-page.component').then(m => m.AdminPageComponent),
+    canActivate: [adminAuthGuard]
+  },
+  {
+    path: 'admin-login',
+    loadComponent: () => import('./admin/admin-login/admin-login.component').then(m => m.AdminLoginComponent)
   },
   // Default route: redirect authenticated users to home, otherwise to login
   { path: '', redirectTo: '/home', pathMatch: 'full' },
