@@ -17,6 +17,35 @@ namespace UrlShortener.API.Controllers
     [Route("api/admin")]
     public class AdminController : ControllerBase
     {
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetStats()
+        {
+            if (!IsAdmin(Request))
+                return Unauthorized("Admin API key required");
+            var links = await _urlRepository.GetAllAsync();
+            var users = _userRepository.GetAll();
+            var totalLinks = links.Count;
+            var totalUsers = users.Count();
+            var totalClicks = links.Sum(l => l.ClicksCount);
+            var topLinks = links
+                .OrderByDescending(l => l.ClicksCount)
+                .Take(10)
+                .Select(l => new TopLinkDto
+                {
+                    ShortCode = l.ShortCode,
+                    OriginalUrl = l.OriginalUrl,
+                    ClicksCount = l.ClicksCount
+                })
+                .ToList();
+            var stats = new AdminStatsDto
+            {
+                TotalLinks = totalLinks,
+                TotalUsers = totalUsers,
+                TotalClicks = totalClicks,
+                TopLinks = topLinks
+            };
+            return Ok(stats);
+        }
         private readonly IShortenedUrlRepository _urlRepository;
         private readonly IUserRepository _userRepository;
         private const string AdminApiKey = "admin-secret-key"; // TODO: move to config
@@ -53,5 +82,22 @@ namespace UrlShortener.API.Controllers
             await _urlRepository.DeleteByShortCodeAsync(shortCode);
             return NoContent();
         }
+
     }
+}
+
+// DTOs for admin statistics
+public class AdminStatsDto
+{
+    public int TotalLinks { get; set; }
+    public int TotalUsers { get; set; }
+    public int TotalClicks { get; set; }
+    public List<TopLinkDto> TopLinks { get; set; } = new();
+}
+
+public class TopLinkDto
+{
+    public string ShortCode { get; set; } = string.Empty;
+    public string OriginalUrl { get; set; } = string.Empty;
+    public int ClicksCount { get; set; }
 }
