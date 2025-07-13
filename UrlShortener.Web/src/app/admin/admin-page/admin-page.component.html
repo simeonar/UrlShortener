@@ -1,10 +1,17 @@
 <div class="admin-panel">
-  <h2>Admin Panel</h2>
-  <button (click)="showLinks()">Show Links</button>
-  <button (click)="showUsers()">Show Users</button>
-  <button (click)="showStats()">Show Stats</button>
-  <button (click)="showBlockedLinks()">Show Blocked Links</button>
-  <button (click)="logout()">Logout</button>
+  <header class="admin-header">
+    <span class="admin-title">Admin Panel</span>
+    <button class="burger" (click)="menuOpen = !menuOpen" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <nav [class.open]="menuOpen">
+      <button (click)="showLinks(); menuOpen=false">Show Links</button>
+      <button (click)="showUsers(); menuOpen=false">Show Users</button>
+      <button (click)="showStats(); menuOpen=false">Show Stats</button>
+      <button (click)="showBlockedLinks(); menuOpen=false">Show Blocked Links</button>
+      <button (click)="logout(); menuOpen=false">Logout</button>
+    </nav>
+  </header>
   <div *ngIf="error" style="color:red">{{error}}</div>
 
   <div *ngIf="links.length">

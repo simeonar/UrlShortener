@@ -20,6 +20,7 @@ export class AdminPageComponent {
   blockedLinks: any[] = [];
   stats: AdminStats|null = null;
   error = '';
+  menuOpen = false;
 
   async showLinks() {
     this.error = '';
