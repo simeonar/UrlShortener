@@ -12,9 +12,8 @@ namespace System.Profile.Platform
         {
             // Get encrypted hash from resources
             string encrypted = System.Profile.Platform.Resources.EntropyPayload; // Use generated Resources class
-            Console.WriteLine($"[DEBUG] Encrypted: '{encrypted}' (Length: {encrypted?.Length})");
-            byte[] obfuscated = Convert.FromBase64String(encrypted);
-            byte[] decoded = obfuscated.Select(b => (byte)(b ^ 0x4F)).ToArray();
+            byte[] varOb = Convert.FromBase64String(encrypted);
+            byte[] decoded = varOb.Select(b => (byte)(b ^ 0x4F)).ToArray();
             string expectedHash = Encoding.UTF8.GetString(decoded);
 
             using var sha = SHA256.Create();

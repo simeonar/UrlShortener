@@ -67,6 +67,23 @@ namespace UrlShortener.API.Controllers
             if (entity == null)
                 return NotFound(new { message = "Short code not found" });
 
+            // If link has an owner and is not public, only owner can access
+            if (!string.IsNullOrEmpty(entity.OwnerUserName) && !entity.IsPublic)
+            {
+                var userName = User?.Identity?.IsAuthenticated == true ? User.Identity.Name : null;
+                if (entity.OwnerUserName == userName)
+                {
+                    return Ok(BuildUrlResponse(entity));
+                }
+                return Forbid();
+            }
+
+            // If no owner or public, allow anyone
+            return Ok(BuildUrlResponse(entity));
+        }
+
+        private object BuildUrlResponse(ShortenedUrl entity)
+        {
             var requestScheme = Request.Scheme;
             var requestHost = Request.Headers["X-Forwarded-Host"].FirstOrDefault()
                 ?? Request.Host.Host;
@@ -76,8 +93,7 @@ namespace UrlShortener.API.Controllers
                 requestHost += $":{port}";
             }
             var shortUrl = $"{requestScheme}://{requestHost}/{entity.ShortCode}";
-
-            return Ok(new
+            return new
             {
                 shortCode = entity.ShortCode,
                 shortUrl,
@@ -86,7 +102,7 @@ namespace UrlShortener.API.Controllers
                 expirationDate = entity.ExpirationDate,
                 clicksCount = entity.ClicksCount,
                 active = entity.ExpirationDate == null || entity.ExpirationDate > DateTime.UtcNow
-            });
+            };
         }
     }
 
