@@ -10,10 +10,21 @@ builder.Services.AddSingleton<UrlShortener.Core.Services.IQRCodeCache, UrlShorte
 builder.Services.AddScoped<UrlShortener.Core.Services.IShortCodeGenerator, UrlShortener.Core.Services.ShortCodeGenerator>();
 builder.Services.AddScoped<UrlShortener.Core.Services.IShortCodeUniquenessChecker, UrlShortener.Infrastructure.Repositories.EfShortCodeUniquenessChecker>();
 
-builder.Services.AddSingleton<UrlShortener.Core.Repositories.IShortenedUrlRepository>(provider =>
-    new UrlShortener.Infrastructure.Repositories.FileShortenedUrlRepository(
-        Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "data", "shortened_urls.json")
-    )
+
+// Ensure the data directory and file exist
+var dataDir = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "data");
+var filePath = Path.Combine(dataDir, "shortened_urls.json");
+if (!Directory.Exists(dataDir))
+{
+    Directory.CreateDirectory(dataDir);
+}
+if (!File.Exists(filePath))
+{
+    File.WriteAllText(filePath, "[]");
+}
+
+builder.Services.AddSingleton<UrlShortener.Core.Repositories.IShortenedUrlRepository>(
+    provider => new UrlShortener.Infrastructure.Repositories.FileShortenedUrlRepository(filePath)
 );
 
 
