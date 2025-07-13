@@ -1,7 +1,14 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
-import { config } from './app/app.config.server';
+import { provideRouter } from '@angular/router';
+import { appRoutes } from './app/app-routing.module';
+import { provideHttpClient } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
-const bootstrap = () => bootstrapApplication(AppComponent, config);
-
-export default bootstrap;
+export default () => bootstrapApplication(AppComponent, {
+  providers: [
+    provideRouter(appRoutes),
+    provideHttpClient(),
+    provideAnimations(),
+  ]
+});

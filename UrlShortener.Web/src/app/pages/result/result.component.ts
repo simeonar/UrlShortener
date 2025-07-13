@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-result',
-  standalone: true,
   imports: [CommonModule],
   template: `
     <div class="container py-5" *ngIf="result && result.shortUrl && result.shortCode; else noData">

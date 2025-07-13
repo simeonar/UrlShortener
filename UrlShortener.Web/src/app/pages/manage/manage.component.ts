@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-manage',
-  standalone: true,
   imports: [ReactiveFormsModule, HttpClientModule, CommonModule],
   template: `
     <div class="container py-5">

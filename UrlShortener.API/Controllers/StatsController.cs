@@ -12,6 +12,11 @@ namespace UrlShortener.API.Controllers
         private readonly IClickStatisticRepository _clickRepo;
         private readonly IShortenedUrlRepository _urlRepo;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StatsController"/> class.
+        /// </summary>
+        /// <param name="clickRepo">The click statistics repository.</param>
+        /// <param name="urlRepo">The shortened URL repository.</param>
         public StatsController(IClickStatisticRepository clickRepo, IShortenedUrlRepository urlRepo)
         {
             _clickRepo = clickRepo;
@@ -28,7 +33,6 @@ namespace UrlShortener.API.Controllers
             if (entity == null)
                 return NotFound();
 
-            // Если нет кликов, показываем дату создания с нулём
             var byDay = new[]
             {
                 new { date = entity.CreatedAt.ToString("yyyy-MM-dd"), count = entity.ClicksCount }
@@ -38,7 +42,7 @@ namespace UrlShortener.API.Controllers
             {
                 shortCode = entity.ShortCode,
                 totalClicks = entity.ClicksCount,
-                lastClick = (string?)null, // Можно доработать, если появятся клики
+                lastClick = (string?)null, 
                 byDay
             };
             return Ok(stats);
@@ -112,7 +116,7 @@ namespace UrlShortener.API.Controllers
             {
                 new { source = "google.com", clicks = 4 },
                 new { source = "yandex.ru", clicks = 2 },
-                new { source = "direct", clicks = 3 }
+                new { source = "direct", clicks = 3 },
             };
             return Ok(sources);
         }

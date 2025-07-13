@@ -199,23 +199,8 @@
   </div>
 </nav>
 
-<!-- <main class="main">
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8 text-center">
-        <h1 class="display-4 mb-3">URL Shortener</h1>
-        <p class="lead mb-4">
-          Shorten long links, track clicks, manage your short URLs — quickly and conveniently.
-        </p>
-        <div class="d-flex justify-content-center gap-3 mb-4">
-          <a class="btn btn-primary btn-lg" [routerLink]="['/dashboard']">Go to Statistics</a>
-          <a class="btn btn-outline-secondary btn-lg" [routerLink]="['/manage']">Link Management</a>
-        </div>
-        <hr />
-        <p class="text-muted">Select an action from the menu or use the buttons above.</p>
-      </div>
-    </div>
-  </div>
-</main> -->
-
-<router-outlet />
+<nav>
+  <a routerLink="/login">Login</a> |
+  <a routerLink="/register">Register</a>
+</nav>
+<router-outlet></router-outlet>

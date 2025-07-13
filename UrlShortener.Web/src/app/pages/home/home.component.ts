@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
   template: `
     <div class="container py-5">

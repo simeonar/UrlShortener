@@ -6,7 +6,6 @@ import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-dashboard',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
   template: `
     <div class="container py-5">
