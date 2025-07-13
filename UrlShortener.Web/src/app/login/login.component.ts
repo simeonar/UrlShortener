@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -15,14 +16,18 @@ export class LoginComponent {
   password = '';
   error = '';
 
-  constructor(private auth: AuthService) {}
+  registered = false;
+  constructor(private auth: AuthService, private router: Router) {
+    const nav = this.router.getCurrentNavigation();
+    this.registered = !!nav?.extras?.state?.['registered'];
+  }
 
   onSubmit() {
     this.error = '';
     this.auth.login({ userName: this.userName, password: this.password }).subscribe({
       next: (res) => {
         localStorage.setItem('apiKey', res.apiKey);
-        // redirect to dashboard or show success
+        this.router.navigate(['/dashboard']); // или на главную, если dashboard нет
       },
       error: (err) => {
         this.error = 'Login failed';

@@ -1,5 +1,6 @@
 <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
   <h2>Login</h2>
+  <div *ngIf="registered" style="color:green">Registration successful! Please log in.</div>
   <div>
     <label for="userName">Username</label>
     <input id="userName" name="userName" [(ngModel)]="userName" required />

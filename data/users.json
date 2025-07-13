@@ -1,1 +1,8 @@
-[]
+[
+    {
+        "Id": "6701317c-58ec-4dd4-9261-5d03e914f431",
+        "UserName": "test",
+        "PasswordHash": "n4bQgYhMfWWaL\u002BqgxVrQFaO/TxsrC4Is0V1sFbDwCgg=",
+        "ApiKey": "2a7d1902-3b6f-42e0-b6b1-8deec64d4c56"
+    }
+]
