@@ -17,5 +17,6 @@ namespace UrlShortener.Core.Entities
         public virtual ICollection<ClickStatistic> ClickStatistics { get; set; } = new List<ClickStatistic>();
         public string? OwnerUserName { get; set; } // For user dashboard
         public bool IsBlocked { get; set; } = false; // For moderation
+        public bool IsPublic { get; set; } = false; // If true, link is visible to anyone by code
     }
 }

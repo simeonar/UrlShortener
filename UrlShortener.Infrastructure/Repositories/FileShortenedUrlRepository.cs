@@ -52,7 +52,14 @@ namespace UrlShortener.Infrastructure.Repositories
                 if (!File.Exists(_filePath))
                     return new List<ShortenedUrl>();
                 var json = File.ReadAllText(_filePath);
-                return JsonSerializer.Deserialize<List<ShortenedUrl>>(json) ?? new List<ShortenedUrl>();
+                var list = JsonSerializer.Deserialize<List<ShortenedUrl>>(json) ?? new List<ShortenedUrl>();
+                // Ensure IsPublic is set for legacy records
+                foreach (var url in list)
+                {
+                    if (url.IsPublic != true && url.IsPublic != false)
+                        url.IsPublic = false;
+                }
+                return list;
             }
         }
 
@@ -67,6 +74,8 @@ namespace UrlShortener.Infrastructure.Repositories
             lock (_lock)
             {
                 var all = GetAllAsync().Result;
+                if (url.IsPublic != true && url.IsPublic != false)
+                    url.IsPublic = false;
                 all.Add(url);
                 File.WriteAllText(_filePath, JsonSerializer.Serialize(all));
             }
