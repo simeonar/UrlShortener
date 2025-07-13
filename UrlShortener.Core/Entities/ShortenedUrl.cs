@@ -16,5 +16,6 @@ namespace UrlShortener.Core.Entities
         public int ClicksCount { get; set; }
         public virtual ICollection<ClickStatistic> ClickStatistics { get; set; } = new List<ClickStatistic>();
         public string? OwnerUserName { get; set; } // For user dashboard
+        public bool IsBlocked { get; set; } = false; // For moderation
     }
 }

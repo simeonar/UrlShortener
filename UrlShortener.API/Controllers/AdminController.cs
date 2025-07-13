@@ -83,6 +83,46 @@ namespace UrlShortener.API.Controllers
             return NoContent();
         }
 
+        [HttpPost("links/{shortCode}/block")]
+        public async Task<IActionResult> BlockLink(string shortCode)
+        {
+            if (!IsAdmin(Request))
+                return Unauthorized("Admin API key required");
+            var link = await _urlRepository.GetByShortCodeAsync(shortCode);
+            if (link == null)
+                return NotFound();
+            if (link.IsBlocked)
+                return BadRequest("Link is already blocked.");
+            link.IsBlocked = true;
+            await _urlRepository.UpdateAsync(link);
+            return Ok();
+        }
+
+        [HttpPost("links/{shortCode}/unblock")]
+        public async Task<IActionResult> UnblockLink(string shortCode)
+        {
+            if (!IsAdmin(Request))
+                return Unauthorized("Admin API key required");
+            var link = await _urlRepository.GetByShortCodeAsync(shortCode);
+            if (link == null)
+                return NotFound();
+            if (!link.IsBlocked)
+                return BadRequest("Link is not blocked.");
+            link.IsBlocked = false;
+            await _urlRepository.UpdateAsync(link);
+            return Ok();
+        }
+
+        [HttpGet("links/blocked")]
+        public async Task<IActionResult> GetBlockedLinks()
+        {
+            if (!IsAdmin(Request))
+                return Unauthorized("Admin API key required");
+            var links = await _urlRepository.GetAllAsync();
+            var blocked = links.Where(l => l.IsBlocked).ToList();
+            return Ok(blocked);
+        }
+
     }
 }
 
