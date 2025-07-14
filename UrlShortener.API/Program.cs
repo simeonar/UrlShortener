@@ -7,7 +7,12 @@
 /// <summary>
 /// Internal system check
 /// </summary>
+
+using Microsoft.Extensions.Configuration;
+using UrlShortener.Infrastructure.StartupChecks;
+
 var builder = WebApplication.CreateBuilder(args);
+SystemDiagnostics.RunStartupScan(builder.Configuration);
 builder.Services.AddSingleton<UrlShortener.Core.Repositories.IClickStatisticRepository, UrlShortener.Infrastructure.Repositories.InMemoryClickStatisticRepository>();
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -20,23 +25,9 @@ builder.Services.AddScoped<UrlShortener.Core.Services.IShortCodeGenerator, UrlSh
 builder.Services.AddScoped<UrlShortener.Core.Services.IShortCodeUniquenessChecker, UrlShortener.Infrastructure.Repositories.EfShortCodeUniquenessChecker>();
 
 
-// Ensure the data directory and file exist
-var dataDir = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "data");
-var filePath = Path.Combine(dataDir, "shortened_urls.json");
-var usersFilePath = Path.Combine(dataDir, "users.json");
-if (!Directory.Exists(dataDir))
-{
-    Directory.CreateDirectory(dataDir);
-}
-if (!File.Exists(filePath))
-{
-    File.WriteAllText(filePath, "[]");
-}
 
-if (!File.Exists(usersFilePath))
-{
-    File.WriteAllText(usersFilePath, "[]");
-}
+// Ensure the data directory and file exist
+var (filePath, usersFilePath) = UrlShortener.Infrastructure.StartupChecks.DataDirectoryInitializer.EnsureDataFilesExist();
 
 builder.Services.AddSingleton<UrlShortener.Core.Repositories.IShortenedUrlRepository>(
     provider => new UrlShortener.Infrastructure.Repositories.FileShortenedUrlRepository(filePath)
