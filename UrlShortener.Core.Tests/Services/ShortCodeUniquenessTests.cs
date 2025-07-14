@@ -12,7 +12,6 @@ namespace UrlShortener.Core.Tests.Services
         public async Task GenerateShortCodeAsync_EnsuresUniqueness()
         {
             var uniquenessChecker = new Mock<IShortCodeUniquenessChecker>();
-            // Первый код не уникален, второй уникален
             uniquenessChecker.SetupSequence(x => x.IsShortCodeUniqueAsync(It.IsAny<string>()))
                 .ReturnsAsync(false)
                 .ReturnsAsync(true);

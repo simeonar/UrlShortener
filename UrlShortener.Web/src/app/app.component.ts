@@ -25,7 +25,6 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     let url = '/branding.properties';
     if (typeof window === 'undefined') {
-      // SSR: пробуем взять хост из env или fallback на localhost:4200
       const host = (typeof process !== 'undefined' && process.env && (process.env['VITE_SSR_ORIGIN'] || process.env['HOST'])) || 'http://localhost:4200';
       url = host + '/branding.properties';
     }
@@ -74,7 +73,6 @@ export class AppComponent implements OnInit {
   }
   onRegistered() {
     this.showRegisterModal = false;
-    // Можно показать уведомление или сразу открыть логин
   }
   logout() {
     if (typeof window !== 'undefined' && window.localStorage) {

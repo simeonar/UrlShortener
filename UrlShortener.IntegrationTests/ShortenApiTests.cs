@@ -10,7 +10,6 @@ namespace UrlShortener.IntegrationTests
         private readonly HttpClient _client;
         public ShortenApiTests()
         {
-            // Предполагается, что приложение уже запущено на http://localhost:7006
             _client = new HttpClient { BaseAddress = new System.Uri("http://localhost:7006") };
         }
 

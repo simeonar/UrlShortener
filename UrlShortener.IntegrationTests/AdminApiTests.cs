@@ -20,7 +20,6 @@ namespace UrlShortener.IntegrationTests
         {
             var email = "admin@example.com";
             var password = "Admin123!@#";
-            // Предполагается, что регистрация admin создаёт пользователя с ролью admin
             await _client.PostAsJsonAsync("/api/auth/register", new { email, password, isAdmin = true });
             var loginResp = await _client.PostAsJsonAsync("/api/auth/login", new { email, password });
             var json = await loginResp.Content.ReadAsStringAsync();
@@ -50,14 +49,11 @@ namespace UrlShortener.IntegrationTests
         public async Task DeleteLinks_AsAdmin_Success()
         {
             await AuthenticateAdminAsync();
-            // Создать ссылку для удаления
             await _client.PostAsJsonAsync("/api/user/links", new { url = "https://to-delete.com" });
-            // Получить список ссылок
             var listResp = await _client.GetAsync("/api/admin/links");
             var json = await listResp.Content.ReadAsStringAsync();
             var doc = System.Text.Json.JsonDocument.Parse(json);
             var firstShortCode = doc.RootElement[0].GetProperty("shortCode").GetString();
-            // Удалить ссылку
             var delResp = await _client.DeleteAsync($"/api/admin/links/{firstShortCode}");
             Assert.Equal(HttpStatusCode.OK, delResp.StatusCode);
         }

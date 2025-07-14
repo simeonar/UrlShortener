@@ -17,7 +17,7 @@ namespace UrlShortener.IntegrationTests
         [Fact]
         public async Task GetUrl_ByShortCode_ReturnsCorrectData()
         {
-            // Arrange: создаём ссылку
+            // Arrange
             var createReq = new { originalUrl = "https://test.com" };
             var createResp = await _client.PostAsJsonAsync("/api/shorten", createReq);
             createResp.EnsureSuccessStatusCode();
@@ -25,7 +25,7 @@ namespace UrlShortener.IntegrationTests
             var doc = JsonDocument.Parse(createJson);
             var shortCode = doc.RootElement.GetProperty("shortCode").GetString();
 
-            // Act: получаем по shortCode
+            // Act
             var getResp = await _client.GetAsync($"/api/urls/{shortCode}");
             getResp.EnsureSuccessStatusCode();
             var getJson = await getResp.Content.ReadAsStringAsync();

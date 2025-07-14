@@ -19,7 +19,7 @@ namespace UrlShortener.IntegrationTests
         [Fact]
         public async Task Redirect_ByShortCode_Returns302AndLocation()
         {
-            // Arrange: создаём ссылку
+            // Arrange
             var createReq = new { originalUrl = "https://redirect-test.com" };
             var createResp = await _client.PostAsJsonAsync("/api/shorten", createReq);
             createResp.EnsureSuccessStatusCode();
@@ -27,7 +27,7 @@ namespace UrlShortener.IntegrationTests
             var doc = JsonDocument.Parse(createJson);
             var shortCode = doc.RootElement.GetProperty("shortCode").GetString();
 
-            // Act: редирект
+            // Act
             var handler = new HttpClientHandler { AllowAutoRedirect = false };
             using var noRedirectClient = new HttpClient(handler) { BaseAddress = _client.BaseAddress };
             var resp = await noRedirectClient.GetAsync($"/{shortCode}");

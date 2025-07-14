@@ -28,7 +28,7 @@ export class LoginComponent {
       next: (res) => {
         localStorage.setItem('apiKey', res.apiKey);
         localStorage.setItem('userName', res.userName);
-        this.router.navigate(['/dashboard']); // или на главную, если dashboard нет
+        this.router.navigate(['/dashboard']); // Navigate to dashboard after successful login
       },
       error: (err) => {
         this.error = 'Login failed';

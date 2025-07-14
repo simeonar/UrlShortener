@@ -43,7 +43,7 @@ namespace UrlShortener.Core.Tests.Services
             Assert.True(limiter.AllowRequest("ip1"));
             Assert.True(limiter.AllowRequest("ip1"));
             Assert.False(limiter.AllowRequest("ip1"));
-            Assert.True(limiter.AllowRequest("ip2")); // другой ключ
+            Assert.True(limiter.AllowRequest("ip2")); // different key
         }
     }
 }

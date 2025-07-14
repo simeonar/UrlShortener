@@ -46,7 +46,6 @@ export class ResultComponent {
     }
   }
 
-  // Сброс состояния при повторном переходе
   onShortenAnother() {
     this.router.navigate(['/'], { state: {} });
   }

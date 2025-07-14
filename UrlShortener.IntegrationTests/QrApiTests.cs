@@ -18,7 +18,7 @@ namespace UrlShortener.IntegrationTests
         [Fact]
         public async Task GetQr_ByShortCode_ReturnsPng()
         {
-            // Arrange: создаём ссылку
+            // Arrange
             var createReq = new { originalUrl = "https://qr-test.com" };
             var createResp = await _client.PostAsJsonAsync("/api/shorten", createReq);
             createResp.EnsureSuccessStatusCode();
@@ -26,12 +26,12 @@ namespace UrlShortener.IntegrationTests
             var doc = JsonDocument.Parse(createJson);
             var shortCode = doc.RootElement.GetProperty("shortCode").GetString();
 
-            // Act: получаем QR
+            // Act
             var qrResp = await _client.GetAsync($"/api/qr/{shortCode}");
             qrResp.EnsureSuccessStatusCode();
             Assert.Equal("image/png", qrResp.Content.Headers.ContentType?.MediaType);
             var bytes = await qrResp.Content.ReadAsByteArrayAsync();
-            Assert.True(bytes.Length > 100); // Должен быть не пустой PNG
+            Assert.True(bytes.Length > 100); 
         }
 
         [Fact]
