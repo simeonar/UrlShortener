@@ -23,7 +23,13 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.http.get('/branding.properties', { responseType: 'text' }).subscribe(data => {
+    let url = '/branding.properties';
+    if (typeof window === 'undefined') {
+      // SSR: пробуем взять хост из env или fallback на localhost:4200
+      const host = (typeof process !== 'undefined' && process.env && (process.env['VITE_SSR_ORIGIN'] || process.env['HOST'])) || 'http://localhost:4200';
+      url = host + '/branding.properties';
+    }
+    this.http.get(url, { responseType: 'text' }).subscribe(data => {
       const props = this.parseProperties(data);
       this.copyVisible = props['copy.visible'] === 'true';
       this.signatureValue = `© ${props['author.name'] ?? ''} ${props['author.surname'] ?? ''}`.trim();
