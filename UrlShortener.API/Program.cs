@@ -7,14 +7,6 @@
 /// <summary>
 /// Internal system check
 /// </summary>
-try
-{
-    if (!System.Profile.Platform.EntropySeed.IsReady())
-    {
-        throw new Exception("Entropy misalignment detected");
-    }
-}
-catch { throw; }
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<UrlShortener.Core.Repositories.IClickStatisticRepository, UrlShortener.Infrastructure.Repositories.InMemoryClickStatisticRepository>();
 // Add services to the container.

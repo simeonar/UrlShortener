@@ -11,4 +11,12 @@
     "logLevel": "debug",
     "pathRewrite": { "^/": "/" }
   }
+  ,
+  "/branding.properties": {
+    "target": "http://localhost:4200/../..",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": { "^/branding.properties": "/branding.properties" }
+  }
 }
