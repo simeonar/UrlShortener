@@ -12,6 +12,13 @@ Ein umfassender URL-Shortener-Dienst, der Link-Kürzung, benutzerdefinierte Alia
 
 ---
 
+
+## Hinweis zur Autorisierung
+
+> ⚠️ Hinweis: Die Benutzer-Authentifizierung ist aktuell stark vereinfacht implementiert, um die Entwicklung und das Testen zu beschleunigen. In zukünftigen Versionen wird ein vollständiges und sicheres Authentifizierungs- und Berechtigungssystem integriert.
+
+---
+
 ## Schnellstart
 
 ### Backend (API) starten
