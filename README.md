@@ -201,6 +201,12 @@ Tests sind teilweise vorbereitet, die Abdeckung wird kontinuierlich ausgebaut.
 
 ---
 
+## Community & Feedback
+
+> 💡 Sie interessieren sich für meinen Ansatz oder möchten die Entwicklung herausfordern? Gerne können Sie mir zusätzliche Aufgaben oder Verbesserungsvorschläge zu diesem Projekt geben – ich freue mich über jedes Feedback und neue Ideen!
+
+---
+
 ## Lizenz
 
 MIT License
