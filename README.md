@@ -12,6 +12,14 @@ Ein umfassender URL-Shortener-Dienst, der Link-Kürzung, benutzerdefinierte Alia
 
 ---
 
+## Projektmanagement & Arbeitsweise
+
+Für Richtlinien zur Entwicklung, Planung, Qualität, CI/CD und Release-Prozessen siehe den Projektmanagement‑Leitfaden:
+
+- docs/Projektmanagement-Leitfaden.md
+
+---
+
 
 ## Hinweis zur Autorisierung
 

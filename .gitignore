@@ -1,10 +1,11 @@
 PROGRESS.md
-Docs/
 *.md
 !README.md
 !README.MD
 !**/README.md
 !**/README.MD
+!docs/**
+!docs/**/*.md
 bin/
 obj/
 *.user
